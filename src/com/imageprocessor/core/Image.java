@@ -103,6 +103,25 @@ public class Image {
 		rgb[2] = (int) (0xFF & b);
 	}
 
+	/**
+	 * Diffuses the error/correction to the target pixel
+	 * 
+	 * @param error
+	 *            Error value for RGB channel
+	 * @author jpatel77
+	 */
+	public void diffuseError(int x, int y, int[] error, double ratio) {
+		int[] rgb = new int[3];
+		this.getPixel(x, y, rgb);
+
+		for (int i = 0; i < 3; i++) {
+			int result = (int) (rgb[i] + (error[i] * ratio));
+			rgb[i] = Math.max(Math.min(result, 255), 0);
+		}
+
+		setPixel(x, y, rgb);
+	}
+
 	public void displayPixelValue(int x, int y)
 	// Display rgb pixel in unsigned byte value (0~255)
 	{

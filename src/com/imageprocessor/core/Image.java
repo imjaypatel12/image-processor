@@ -1,18 +1,24 @@
 package com.imageprocessor.core;
 
+import java.awt.BorderLayout;
+import java.awt.image.BufferedImage;
+
 /*******************************************************
  CS4551 Multimedia Software Systems
  @ Author: Elaine Kang
 
  This image class is for a 24bit RGB image only.
  *******************************************************/
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import java.io.*;
-import java.util.*;
-import java.awt.*;
-import java.awt.image.*;
-import javax.swing.*;
 import javax.imageio.stream.FileImageInputStream;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 // A wrapper class of BufferedImage
 // Provide a couple of utility functions such as reading from and writing to PPM file
@@ -21,11 +27,12 @@ public class Image {
 	private BufferedImage img;
 	private String fileName; // Input file name
 	private int pixelDepth = 3; // pixel depth in byte
+	private String imageName;
 
 	public Image(int w, int h)
 	// create an empty image with w(idth) and h(eight)
 	{
-		fileName = "";
+		fileName = imageName = "";
 		img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 		System.out.println("Created an empty image with size " + w + "x" + h);
 	}
@@ -36,6 +43,8 @@ public class Image {
 		fileName = fn;
 		readPPM(fileName);
 		System.out.println("Created an image from " + fileName + " with size " + getW() + "x" + getH());
+		Path p = Paths.get(fileName);
+		imageName = p.getFileName().toString();
 	}
 
 	public String getFileName() {
@@ -44,6 +53,8 @@ public class Image {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+		Path p = Paths.get(fileName);
+		this.setImageName(p.getFileName().toString());
 	}
 
 	public int getW() {
@@ -52,6 +63,16 @@ public class Image {
 
 	public int getH() {
 		return img.getHeight();
+	}
+
+	public String getImageName() {
+		if("".equals(imageName))
+			setFileName(getFileName());		// invokes image name setter
+		return imageName;
+	}
+
+	public void setImageName(String imageName) {
+		this.imageName = imageName;
 	}
 
 	public int getSize()
@@ -101,6 +122,12 @@ public class Image {
 		rgb[0] = (int) (0xFF & r);
 		rgb[1] = (int) (0xFF & g);
 		rgb[2] = (int) (0xFF & b);
+	}
+	
+	public int getR(int x, int y) {
+		int[] rgb = new int[3];
+		this.getPixel(x, y, rgb);
+		return rgb[0];
 	}
 
 	/**
